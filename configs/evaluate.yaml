@@ -1,0 +1,27 @@
+# Final comparison on the held-out test volumes (same masks for every method)
+device: auto
+output_dir: results/test
+split: test
+
+data:
+  root: data/singlecoil_val
+  split_file: data/splits.json
+  skip_edge_slices: 0
+  max_eval_volumes: null
+  num_workers: 2
+
+mask:
+  kind: random
+  acceleration: 4
+  center_fraction: 0.08
+
+tv:
+  lam: 0.005          # choose it with scripts/tune_tv.py (validation set)
+  n_iter: 50
+  n_inner: 10
+
+checkpoints:          # remove a line if you have not trained that model
+  U-Net: runs/unet/best.pt
+  Unrolled: runs/unrolled/best.pt
+
+n_examples: 3         # middle slice of the first volumes is saved for figures

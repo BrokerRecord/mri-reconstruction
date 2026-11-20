@@ -1,0 +1,32 @@
+# U-Net baseline (image domain): zero-filled magnitude -> reconstructed magnitude
+seed: 42
+device: auto            # cuda, mps, cpu or auto
+output_dir: runs/unet
+
+data:
+  root: data/singlecoil_val      # folder with the .h5 volumes
+  split_file: data/splits.json   # written by scripts/split_data.py
+  skip_edge_slices: 0            # fastMRI knee edge slices are mostly noise; try 3-5
+  max_train_volumes: null        # set e.g. 20 for a quick run on CPU
+  max_val_volumes: 10            # validation on a subset keeps epochs short
+  num_workers: 2
+
+mask:
+  kind: random                   # random or equispaced
+  acceleration: 4
+  center_fraction: 0.08
+
+model:
+  name: unet
+  chans: 32                      # 32 -> ~7.8 M parameters; use 16 on CPU
+  num_pools: 4
+  drop_prob: 0.0
+
+train:
+  epochs: 30
+  batch_size: 4
+  lr: 0.001
+  weight_decay: 0.0
+  lr_step: 20
+  lr_gamma: 0.1
+  grad_clip: 1.0

@@ -1,5 +1,19 @@
-# Object file
-*.o
+# Data (fastMRI licence forbids redistribution)
+data/
+*.h5
+*.tar
+*.tar.gz
 
-# Ada Library Information
-*.ali
+# Experiment outputs
+runs/
+results/
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
