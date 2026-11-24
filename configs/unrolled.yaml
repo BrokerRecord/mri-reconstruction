@@ -24,8 +24,8 @@ model:
   share_weights: false
 
 train:
-  epochs: 20
-  batch_size: 1                  # k-space widths differ between volumes
+  epochs: 10
+  batch_size: 1 # k-space widths differ between volumes
   lr: 0.0005
   weight_decay: 0.0
   lr_step: 15

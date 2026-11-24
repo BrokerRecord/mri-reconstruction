@@ -16,12 +16,12 @@ mask:
   center_fraction: 0.08
 
 tv:
-  lam: 0.005          # choose it with scripts/tune_tv.py (validation set)
+  lam: 0.001 # choose it with scripts/tune_tv.py (validation set)
   n_iter: 50
   n_inner: 10
 
-checkpoints:          # remove a line if you have not trained that model
-  U-Net: runs/unet/best.pt
-  Unrolled: runs/unrolled/best.pt
+#checkpoints:          # remove a line if you have not trained that model
+#U-Net: runs/unet/best.pt
+#Unrolled: runs/unrolled/best.pt
 
-n_examples: 3         # middle slice of the first volumes is saved for figures
+n_examples: 3 # middle slice of the first volumes is saved for figures
