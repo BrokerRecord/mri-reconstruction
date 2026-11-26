@@ -50,12 +50,13 @@ def count_parameters(model: torch.nn.Module) -> int:
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def save_checkpoint(path: Path, model, optimizer, epoch: int, best_metric: float, config: dict) -> None:
+def save_checkpoint(path: Path, model, optimizer, epoch: int, best_metric: float, config: dict, scheduler=None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(
         {
             "model": model.state_dict(),
             "optimizer": optimizer.state_dict() if optimizer is not None else None,
+            "scheduler": scheduler.state_dict() if scheduler is not None else None,
             "epoch": epoch,
             "best_metric": best_metric,
             "config": config,

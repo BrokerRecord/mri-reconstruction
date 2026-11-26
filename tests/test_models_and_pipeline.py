@@ -1,6 +1,5 @@
 import torch
 
-
 from mrirecon.data import FastMRISliceDataset, load_split
 from mrirecon.evaluate import evaluate
 from mrirecon.masks import CartesianMask
@@ -59,3 +58,22 @@ def test_end_to_end_train_and_evaluate(synthetic_data, tmp_path):
     assert set(results) == {"Zero-filled", "TV-FISTA", "U-Net", "Unrolled"}
     assert all(r["PSNR_mean"] > 0 for r in results.values())
     assert (tmp_path / "eval" / "results.csv").exists()
+
+
+def test_resume_continues_training_and_history(synthetic_data, tmp_path):
+    import csv
+
+    root, split = synthetic_data
+    out = tmp_path / "unr"
+    model = {"name": "unrolled", "num_cascades": 1, "chans": 8, "num_pools": 2}
+    cfg = base_cfg(root, split, out, model)
+    cfg["train"].update({"epochs": 1, "lr_step": 1, "lr_gamma": 0.5})
+    train(cfg)
+    cfg["train"]["epochs"] = 2
+    train(cfg, resume=True)
+    with open(out / "history.csv") as f:
+        rows = list(csv.DictReader(f))
+    assert [r["epoch"] for r in rows] == ["1", "2"]
+    assert float(rows[1]["lr"]) == float(rows[0]["lr"]) / 2  # schedule continued, not restarted
+    ckpt = torch.load(out / "last.pt", weights_only=False)
+    assert ckpt["epoch"] == 2 and ckpt["scheduler"] is not None
