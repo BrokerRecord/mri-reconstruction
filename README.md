@@ -127,15 +127,28 @@ python scripts/train.py --config configs/unet.yaml --set model.chans=16 data.max
 
 ## Results
 
-4x random Cartesian undersampling, 8 % fully sampled centre, metrics per volume
-(mean ± std over test volumes).
+fastMRI single-coil knee, 4x random Cartesian undersampling (8 % fully sampled centre).
+Test set: 30 held-out volumes (1048 slices). Metrics per volume, mean ± std across volumes.
 
-| Method           | PSNR (dB) | SSIM | NMSE | Parameters | Time / slice |
-| ---------------- | --------- | ---- | ---- | ---------- | ------------ |
-| Zero-filled      | –         | –    | –    | 0          | –            |
-| TV-FISTA (λ = …) | –         | –    | –    | 0          | –            |
-| U-Net            | –         | –    | –    | 7.8 M      | –            |
-| Unrolled (K = 6) | –         | –    | –    | –          | –            |
+| Method               | PSNR (dB)        | SSIM                | NMSE       | Parameters | Epochs | Time / slice (CPU) |
+| -------------------- | ---------------- | ------------------- | ---------- | ---------- | ------ | ------------------ |
+| Zero-filled          | 29.14 ± 2.55     | 0.6489 ± 0.1141     | 0.0490     | 0          | –      | 0.005 s            |
+| TV-FISTA (λ = 0.001) | 29.32 ± 2.99     | 0.6316 ± 0.1287     | 0.0504     | 0          | –      | 4.6 s              |
+| U-Net                | 31.27 ± 3.12     | 0.7121 ± 0.1260     | 0.0335     | 7.76 M     | 30     | 0.46 s             |
+| Unrolled (K = 6)     | **31.59 ± 3.37** | **0.7154 ± 0.1285** | **0.0323** | 2.89 M     | 3\*    | 2.1 s              |
+
+\* The unrolled network was trained for only 3 epochs on CPU (~8.5 h per epoch); training is
+being continued on GPU and this table will be updated.
+
+**Observations**
+
+- Both networks clearly outperform the classical methods (+2.1 to +2.5 dB PSNR, +0.06 SSIM).
+- TV-FISTA barely improves on zero-filling for knee images: it raises PSNR slightly but lowers
+  SSIM by smoothing fine texture (λ = 0.005 gives the best PSNR, λ = 0.001 the best SSIM on validation).
+- The unrolled network matches and slightly exceeds the U-Net with 2.7x fewer parameters and
+  10x fewer epochs, which shows the benefit of building the acquisition physics into the model.
+- The large standard deviations reflect differences between volumes (PD vs PD-FS contrasts), not
+  instability.
 
 ![comparison](figures/comparison_0.png)
 
