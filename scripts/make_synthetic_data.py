@@ -1,9 +1,5 @@
 """Create small synthetic volumes in the fastMRI single-coil format.
 
-Useful to check that the whole pipeline runs (tests, debugging) without the real
-data. The images are random ellipse phantoms, not anatomy: results on them say
-nothing about real MRI performance.
-
 Example:
     python scripts/make_synthetic_data.py --out data/synthetic --volumes 8
 """
